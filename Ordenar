@@ -1,0 +1,72 @@
+.data
+	vetor: .word 3, 0, 4, 1, 2
+	tam: .word 5
+.text
+#carregar valores da memoria
+	la $s0, vetor
+	la $s1, tam
+	lw $t1,0($s1)
+#chamando a função
+	add $a0, $0, $s0
+	add $a1, $0, $t1
+	j inicio
+
+#INICIO DA FUNÇÃO
+inicio:
+#backup
+	add $sp, $sp, -4
+	sw $t1, 0($sp)
+	add $sp, $sp, -4
+	sw $t2, 0($sp)
+	add $sp, $sp, -4
+	sw $t3, 0($sp)
+	add $sp, $sp, -4
+	sw $t4, 0($sp)
+	add $sp, $sp, -4
+	sw $t5, 0($sp)
+	add $sp, $sp, -4
+	sw $t6, 0($sp)
+	
+#processo
+	li $t2, 0		#i
+	li $t3, 0		#j
+	li $t4, 0		#contador
+	li $t5, 0		#v[j]
+	li $t6, 0		#v[j + 1]
+
+
+	
+#for(i = 0;i < tam; i++)
+#	for(j = 0; j < tam; j++)
+#		if(v[j] > v[j + 1]
+#			aux = v[j]
+#			v[j] = v[i + j]
+#			v[j + 1] = aux
+
+ordenar:
+	beq $t2,$t1, fim_função
+		beq $t3, $t1, fim_loop
+			mul $s1, $t3, 4		#s1 = j * 4
+			add $s2, $s0, $s1	#s2= s1 + 1º posição do vetor 	
+			lw $t5, 0($s2)
+			#t6 = t5 + 4
+			addi $s2, $s2, 4	
+			lw $t6, 0($s2)
+			
+			slt $t4, $t5, $t6 	#t4 = 1 -> se t5 < t6
+			beq $t4, 1, manter 
+				sw $t5, 0($s2)
+				addi $s2, $s2, -4
+				sw $t6, 0($s2)
+							
+manter:		
+		addi $t3, $t3, 1	
+	j ordenar
+	
+	
+	fim_loop:
+		add $t3, $0, $0
+		addi $t2, $t2, 1
+		j ordenar
+fim_função:
+	
